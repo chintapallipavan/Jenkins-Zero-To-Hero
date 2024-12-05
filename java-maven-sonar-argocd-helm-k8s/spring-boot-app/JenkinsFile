@@ -7,7 +7,7 @@ pipeline {
   }
   environment {
     DOCKER_CONFIG = '/root/.docker' // Specify writable directory for Docker metadata
-    SONAR_URL = 'http://34.201.116.83:9000'
+    SONAR_URL = "http://34.205.30.198:9000"
   }
   stages {
     stage('Checkout') {
