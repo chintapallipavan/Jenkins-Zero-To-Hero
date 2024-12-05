@@ -57,27 +57,28 @@ pipeline {
         }
       }
     }
-   stage('Update Deployment File') {
-  environment {
-    GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
-    GIT_USER_NAME = "chintapallipavan"  // Your GitHub username
-    GITHUB_USERNAME = "chinthapallipavankumar@gmail.com"  // GitHub username for authentication
-    GITHUB_PASSWORD = "your_personal_access_token"  // Use a GitHub token instead of a password
-  }
-  steps {
-    script {
-      echo "Updating Kubernetes deployment manifest..."
-      // Configure Git user settings
-      sh '''
-        git config user.email "chinthapallipavankumar@gmail.com"
-        git config user.name "chintapallipavan"
-        cd java-maven-sonar-argocd-helm-k8s
-        # Replace the image tag in the deployment file
-        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
-        git add spring-boot-app-manifests/deployment.yml
-        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-        git push https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-      '''
+    stage('Update Deployment File') {
+      environment {
+        GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
+        GIT_USER_NAME = "chintapallipavan"  // Your GitHub username
+      }
+      steps {
+        script {
+          echo "Updating Kubernetes deployment manifest..."
+          withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+            sh '''
+              git config user.email "chinthapallipavankumar@gmail.com"
+              git config user.name "chintapallipavan"
+              cd java-maven-sonar-argocd-helm-k8s
+              # Replace the image tag in the deployment file
+              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+              git add spring-boot-app-manifests/deployment.yml
+              git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+              git push https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+            '''
+          }
+        }
+      }
     }
   }
 }
