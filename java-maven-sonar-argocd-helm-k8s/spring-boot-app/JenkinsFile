@@ -14,7 +14,7 @@ pipeline {
       steps {
         echo 'Checkout stage passed'
         // Uncomment to enable Git checkout
-        // git branch: 'main', url: ''
+        // git branch: 'main', url: 'https://github.com/chintapallipavan/Jenkins-Zero-To-Hero'
       }
     }
     stage('Build and Test') {
