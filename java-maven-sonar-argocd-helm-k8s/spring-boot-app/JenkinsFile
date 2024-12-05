@@ -65,7 +65,7 @@ pipeline {
       steps {
         script {
           echo "Updating Kubernetes deployment manifest..."
-          withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+          withCredentials([usernamePassword(credentialsId: 'GITHUB_CREDENTIALS', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
             sh '''
               git config user.email "chinthapallipavankumar@gmail.com"
               git config user.name "chintapallipavan"
