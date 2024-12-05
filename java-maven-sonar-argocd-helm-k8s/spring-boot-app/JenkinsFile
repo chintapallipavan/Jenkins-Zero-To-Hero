@@ -39,22 +39,26 @@ pipeline {
         }
       }
     }
-   stage('Build and Push Docker Image') {
+     stage('Build and Push Docker Image') {
   environment {
     DOCKER_IMAGE = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}"
-    REGISTRY_CREDENTIALS = credentials('devopshint')
+    REGISTRY_CREDENTIALS = credentials('docker-cred')  // Ensure 'docker-cred' is set in Jenkins credentials
   }
   steps {
     script {
-      sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-      sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
-      def dockerImage = docker.image("${DOCKER_IMAGE}")
-      docker.withRegistry('https://index.docker.io/v1/', "devopshint") {
+      // Use the docker.withRegistry block to login using Jenkins credentials
+      docker.withRegistry('https://index.docker.io/v1/', 'docker-cred') {
+        // Build the Docker image
+        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
+        def dockerImage = docker.image("${DOCKER_IMAGE}")
+        // Push the Docker image
         dockerImage.push()
       }
     }
   }
 }
+
+    
 
     
     stage('Update Deployment File') {
